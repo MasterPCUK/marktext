@@ -1070,15 +1070,17 @@ const actions = {
   },
 
   LINTEN_FOR_EXPORT_SUCCESS ({ commit }) {
-    ipcRenderer.on('mt::export-success', (e, { type, filePath }) => {
-      notice.notify({
-        title: 'Exported successfully',
-        message: `Exported "${path.basename(filePath)}" successfully!`,
-        showConfirm: true
-      })
-        .then(() => {
-          shell.showItemInFolder(filePath)
+    ipcRenderer.on('mt::export-success', async (e, { type, filePath }) => {
+      try {
+        await notice.notify({
+          title: 'Exported successfully',
+          message: `Exported "${path.basename(filePath)}" successfully!`,
+          showConfirm: true
         })
+        shell.showItemInFolder(filePath)
+      } catch (_) {
+        // User dismissed the notification, nothing to do.
+      }
     })
   },
 
